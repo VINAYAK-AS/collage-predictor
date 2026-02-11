@@ -1,48 +1,26 @@
 from flask import Flask, render_template, request
-import pickle
-import numpy as np
 
 app = Flask(__name__)
 
-# Load trained ML model
-model = pickle.load(open('model/college_model.pkl', 'rb'))
-
-# Load encoder (for category / course if needed)
-encoder = pickle.load(open('model/encoder.pkl', 'rb'))
-
-
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
-
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
-    try:
-        # Get form data
-        rank = int(request.form['rank'])
-        category = request.form['category']
-        course = request.form['course']
+    sname=request.form.get("sname")
+    rank = request.form.get("rank")
+    category = request.form.get("category")
+    course = request.form.get("course")
 
-        # Encode categorical values
-        encoded_features = encoder.transform([[category, course]])
+    return f"""
+    <h1>Hello , {sname}</h1>
+    <h2>Input Received Successfully ✅</h2>
+    <p><b>Rank:</b> {rank}</p>
+    <p><b>Category:</b> {category}</p>
+    <p><b>Course:</b> {course}</p>
+    <a href="/">Go Back</a>
+    """
 
-        # Combine rank with encoded values
-        final_input = np.hstack(([[rank]], encoded_features))
-
-        # Predict
-        prediction = model.predict(final_input)
-        probability = model.predict_proba(final_input)
-
-        return render_template(
-            'result.html',
-            college=prediction[0],
-            confidence=round(max(probability[0]) * 100, 2)
-        )
-
-    except Exception as e:
-        return f"Error occurred: {e}"
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
