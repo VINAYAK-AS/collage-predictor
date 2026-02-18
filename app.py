@@ -12,7 +12,7 @@ def predict():
     rank = request.form.get("rank")
     category = request.form.get("category")
     course = request.form.get("course")
-
+      course = request.form.get("place")
     return f"""
     <h1>Hello , {sname}</h1>
     <h2>Input Received Successfully ✅</h2>
@@ -24,3 +24,4 @@ def predict():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
